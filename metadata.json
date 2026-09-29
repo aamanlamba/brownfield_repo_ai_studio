@@ -1,0 +1,7 @@
+{
+  "name": "AI FDE Brownfield KYC Service",
+  "description": "Synthetic identity-document verification and case aggregation service with interactive KYC workbench and deterministic OCR analysis.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
