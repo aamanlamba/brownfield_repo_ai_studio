@@ -8,17 +8,17 @@ This repository represents the **current system inherited by an engineering team
 All identities, document numbers, images and cases are synthetic. No real government document artwork, logos, QR codes, barcodes or identities are used.
 
 ## Current capabilities
-- Express & Vite service with `/v1` and health endpoints
-- Interactive KYC Workbench & Document Inspector UI (React + Tailwind CSS)
+- FastAPI service with `/v1` endpoints
 - Deterministic offline OCR sidecars
 - Regex / line-prefix document parsing
 - Baseline validation rules
 - Document-level APPROVE / REVIEW / REJECT outcomes
 - Case-level aggregation
 - Health and readiness endpoints
-- Correlation IDs and structured logging
+- Correlation IDs and basic structured logging
+- Docker packaging
 - Synthetic application, image, OCR and ground-truth datasets
-- Automated TypeScript sanity checks
+- Automated tests and sanity checks
 
 ## Included problem scenarios
 - Clean passport, national-ID and driving-licence documents
@@ -30,35 +30,48 @@ All identities, document numbers, images and cases are synthetic. No real govern
 - Multiple documents belonging to the same applicant
 
 ## Quick start
-### Node.js / AI Studio
+### Option A — Python
 ```bash
-npm install
-npm run dev
+python -m venv .venv
+# Windows: .venv\\Scripts\\activate
+# Linux/macOS: source .venv/bin/activate
+python -m pip install -r requirements.txt
+python scripts/workshop_preflight.py
+python -m uvicorn src.app:app --host 0.0.0.0 --port 8000
 ```
 
-App runs on `http://0.0.0.0:3000` with interactive UI and API endpoints.
+Open `http://127.0.0.1:8000/docs`.
+
+### Option B — Docker
+```bash
+docker build -t ai-fde-kyc-v1 .
+docker run --rm -p 8000:8000 ai-fde-kyc-v1
+```
 
 ## Example API calls
 List cases:
 ```bash
-curl http://127.0.0.1:3000/v1/cases
+curl http://127.0.0.1:8000/v1/cases
 ```
 
 Verify one synthetic document:
 ```bash
-curl -X POST http://127.0.0.1:3000/v1/documents/verify \
+curl -X POST http://127.0.0.1:8000/v1/documents/verify \
   -H "Content-Type: application/json" \
   -d '{"document_id":"CASE-001-PASSPORT"}'
 ```
 
 Verify one applicant case:
 ```bash
-curl -X POST http://127.0.0.1:3000/v1/cases/CASE-005/verify
+curl -X POST http://127.0.0.1:8000/v1/cases/CASE-005/verify
 ```
 
 ## Run checks
 ```bash
-npm test
+python scripts/workshop_preflight.py
+python scripts/sanity_check.py
+python -m pytest -q
+python scripts/smoke_server.py
 ```
 
 See `WORKSHOP_RUNBOOK.md` for Windows, Linux/macOS, Docker and troubleshooting instructions.
